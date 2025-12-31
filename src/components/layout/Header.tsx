@@ -35,22 +35,20 @@ const Header = () => {
 
           {/* Search Bar - Center, takes available space */}
           <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-xl">
-            <div className="relative flex items-center w-full bg-muted/40 rounded-lg border border-border/50 overflow-hidden">
+            <div className="flex items-center w-full h-10 bg-muted/40 rounded-lg border border-border/50 overflow-hidden">
               <Input
                 type="text"
                 placeholder="Search the perfect image, document or graphic..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="flex-1 h-10 px-4 bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/60 text-sm"
+                className="flex-1 h-full px-4 bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/60 text-sm"
               />
-              <Button 
+              <button 
                 type="submit" 
-                variant="gradient" 
-                size="sm"
-                className="h-8 rounded-md px-4 mr-1"
+                className="h-full px-4 bg-primary hover:bg-primary/90 transition-colors flex items-center justify-center"
               >
-                <Search className="h-4 w-4" />
-              </Button>
+                <Search className="h-4 w-4 text-primary-foreground" />
+              </button>
             </div>
           </form>
 
