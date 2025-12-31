@@ -24,55 +24,55 @@ const Header = () => {
   return (
     <header className="fixed top-0 left-0 right-0 w-full z-50 transition-all duration-300 glass border-b border-border/20">
       <div className="container mx-auto px-4">
-        <div className="flex items-center h-16 md:h-20 gap-8">
+        <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 shrink-0">
-            <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-glow">
-              <span className="text-primary-foreground font-bold text-xl">P</span>
+            <div className="w-9 h-9 rounded-xl gradient-primary flex items-center justify-center shadow-glow">
+              <span className="text-primary-foreground font-bold text-lg">P</span>
             </div>
-            <span className="text-xl font-bold text-foreground hidden sm:block">PixelVault</span>
+            <span className="text-lg font-bold text-foreground hidden sm:block">PixelVault</span>
           </Link>
 
           {/* Desktop Navigation - Glass background */}
-          <nav className="hidden lg:flex items-center gap-1 px-2 py-1.5 rounded-full bg-background/10 backdrop-blur-md border border-border/30">
+          <nav className="hidden lg:flex items-center gap-0.5 px-1.5 py-1 rounded-full bg-background/10 backdrop-blur-md border border-border/30 mx-4">
             <Link 
               to="/gallery" 
-              className="px-4 py-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-foreground/10 transition-all font-medium"
+              className="px-3 py-1.5 rounded-full text-sm text-muted-foreground hover:text-foreground hover:bg-foreground/10 transition-all font-medium"
             >
               Explore
             </Link>
             <Link 
               to="/gallery?category=nature" 
-              className="px-4 py-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-foreground/10 transition-all font-medium"
+              className="px-3 py-1.5 rounded-full text-sm text-muted-foreground hover:text-foreground hover:bg-foreground/10 transition-all font-medium"
             >
               Categories
             </Link>
             <Link 
               to="/gallery?sort=popular" 
-              className="px-4 py-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-foreground/10 transition-all font-medium"
+              className="px-3 py-1.5 rounded-full text-sm text-muted-foreground hover:text-foreground hover:bg-foreground/10 transition-all font-medium"
             >
               Popular
             </Link>
           </nav>
 
           {/* Desktop Actions - Right aligned */}
-          <div className="hidden md:flex items-center gap-4 ml-auto">
+          <div className="hidden md:flex items-center gap-2">
             {/* Search Bar */}
             <form onSubmit={handleSearch} className="flex items-center">
               <div className="relative flex items-center bg-muted/30 rounded-full border border-border/40 overflow-hidden">
-                <Search className="absolute left-4 h-4 w-4 text-muted-foreground pointer-events-none" />
+                <Search className="absolute left-3 h-4 w-4 text-muted-foreground pointer-events-none" />
                 <Input
                   type="text"
-                  placeholder="Search for images..."
+                  placeholder="Search..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-11 pr-2 w-48 lg:w-56 h-10 bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/70"
+                  className="pl-9 pr-2 w-32 lg:w-40 h-9 bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/70 text-sm"
                 />
                 <Button 
                   type="submit" 
                   variant="gradient" 
                   size="sm"
-                  className="h-8 rounded-full px-5 mr-1"
+                  className="h-7 rounded-full px-4 mr-1 text-xs"
                 >
                   Search
                 </Button>
@@ -81,21 +81,21 @@ const Header = () => {
             
             <ThemeToggle />
             
-            <Button variant="gradient" className="gap-2 rounded-full px-5">
+            <Button variant="gradient" size="sm" className="gap-1.5 rounded-full px-4 h-9">
               <User className="h-4 w-4" />
               Sign In
             </Button>
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="flex items-center gap-2 md:hidden ml-auto">
+          <div className="flex items-center gap-2 md:hidden">
             <ThemeToggle />
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
-              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
           </div>
         </div>
