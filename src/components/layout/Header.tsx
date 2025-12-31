@@ -1,14 +1,25 @@
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { User, Menu, X, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { motion, AnimatePresence } from 'framer-motion';
 import ThemeToggle from '@/components/ThemeToggle';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const location = useLocation();
+  const navigate = useNavigate();
   const isHome = location.pathname === '/';
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/gallery?search=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery('');
+    }
+  };
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isHome ? 'bg-transparent' : 'glass'}`}>
@@ -45,12 +56,27 @@ const Header = () => {
           </nav>
 
           {/* Desktop Actions */}
-          <div className="hidden md:flex items-center gap-2">
-            <Link to="/gallery">
-              <Button variant="ghost" size="icon">
-                <Search className="h-5 w-5" />
-              </Button>
-            </Link>
+          <div className="hidden md:flex items-center gap-3">
+            {/* Search Bar */}
+            <form onSubmit={handleSearch} className="flex items-center">
+              <div className="relative flex items-center">
+                <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="text"
+                  placeholder="Search for images..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 pr-4 w-64 h-10 bg-background/50 border-border/50 rounded-l-full rounded-r-none focus-visible:ring-primary"
+                />
+                <Button 
+                  type="submit" 
+                  variant="gradient" 
+                  className="h-10 rounded-l-none rounded-r-full px-6"
+                >
+                  Search
+                </Button>
+              </div>
+            </form>
             <ThemeToggle />
             <Button variant="gradient" className="gap-2">
               <User className="h-4 w-4" />
@@ -82,6 +108,23 @@ const Header = () => {
             className="md:hidden glass border-t border-border"
           >
             <div className="container mx-auto px-4 py-4 flex flex-col gap-4">
+              {/* Mobile Search */}
+              <form onSubmit={handleSearch} className="flex items-center gap-2">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    type="text"
+                    placeholder="Search for images..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10 w-full bg-background/50 border-border/50 rounded-full"
+                  />
+                </div>
+                <Button type="submit" variant="gradient" size="icon" className="rounded-full">
+                  <Search className="h-4 w-4" />
+                </Button>
+              </form>
+              
               <Link 
                 to="/gallery" 
                 className="text-foreground py-2 font-medium"
