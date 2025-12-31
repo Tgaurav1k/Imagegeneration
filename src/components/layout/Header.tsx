@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Upload, User, Menu, X, Search } from 'lucide-react';
+import { User, Menu, X, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import ThemeToggle from '@/components/ThemeToggle';
@@ -52,12 +52,6 @@ const Header = () => {
               </Button>
             </Link>
             <ThemeToggle />
-            <Link to="/upload">
-              <Button variant="outline" className="gap-2">
-                <Upload className="h-4 w-4" />
-                Upload
-              </Button>
-            </Link>
             <Button variant="gradient" className="gap-2">
               <User className="h-4 w-4" />
               Sign In
@@ -110,12 +104,6 @@ const Header = () => {
                 Popular
               </Link>
               <div className="flex flex-col gap-2 pt-2 border-t border-border">
-                <Link to="/upload" onClick={() => setIsMenuOpen(false)}>
-                  <Button variant="outline" className="w-full gap-2">
-                    <Upload className="h-4 w-4" />
-                    Upload
-                  </Button>
-                </Link>
                 <Button variant="gradient" className="w-full gap-2">
                   <User className="h-4 w-4" />
                   Sign In
