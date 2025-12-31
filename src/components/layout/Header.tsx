@@ -33,23 +33,23 @@ const Header = () => {
             <span className="text-xl font-bold text-foreground hidden sm:block">PixelVault</span>
           </Link>
 
-          {/* Desktop Navigation - Centered */}
-          <nav className="hidden lg:flex items-center gap-8 flex-1">
+          {/* Desktop Navigation - Glass background */}
+          <nav className="hidden lg:flex items-center gap-1 px-2 py-1.5 rounded-full bg-background/10 backdrop-blur-md border border-border/30">
             <Link 
               to="/gallery" 
-              className="text-muted-foreground hover:text-foreground transition-colors font-medium"
+              className="px-4 py-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-foreground/10 transition-all font-medium"
             >
               Explore
             </Link>
             <Link 
               to="/gallery?category=nature" 
-              className="text-muted-foreground hover:text-foreground transition-colors font-medium"
+              className="px-4 py-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-foreground/10 transition-all font-medium"
             >
               Categories
             </Link>
             <Link 
               to="/gallery?sort=popular" 
-              className="text-muted-foreground hover:text-foreground transition-colors font-medium"
+              className="px-4 py-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-foreground/10 transition-all font-medium"
             >
               Popular
             </Link>
