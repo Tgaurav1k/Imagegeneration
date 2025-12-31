@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Download, X, Share2, Expand, ZoomIn, ZoomOut, ChevronLeft, ChevronRight, Monitor, Smartphone, Loader2, Check } from 'lucide-react';
+import { Heart, Download, X, Share2, Expand, ZoomIn, ZoomOut, ChevronLeft, ChevronRight, Monitor, Smartphone, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -19,11 +19,28 @@ interface ImageModalProps {
   onNavigate?: (direction: 'prev' | 'next') => void;
 }
 
+// Generate recommended images based on seed
+const generateRecommendedImages = (currentId: number, count: number = 8) => {
+  return Array.from({ length: count }, (_, i) => ({
+    id: currentId + 100 + i,
+    url: `https://picsum.photos/seed/${currentId + 100 + i}/400/300`,
+    title: ['Mountain Vista', 'Ocean Dreams', 'City Lights', 'Forest Path', 'Desert Sun', 'Aurora Night', 'Coastal Breeze', 'Valley Mist'][i % 8],
+    author: ['alex', 'maria', 'john', 'emma', 'david', 'sarah', 'mike', 'lisa'][i % 8],
+    downloads: Math.floor(Math.random() * 5000) + 500,
+  }));
+};
+
 const ImageModal = ({ image, onClose, onNavigate }: ImageModalProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [zoom, setZoom] = useState(1);
   const [downloadType, setDownloadType] = useState<'mobile' | 'desktop' | null>(null);
+  const [isDownloading, setIsDownloading] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  const recommendedImages = useMemo(() => 
+    image ? generateRecommendedImages(image.id) : [], 
+    [image?.id]
+  );
 
   if (!image) return null;
 
@@ -42,18 +59,14 @@ const ImageModal = ({ image, onClose, onNavigate }: ImageModalProps) => {
     navigate(`/gallery?q=${tag}`);
   };
 
-  const [isDownloading, setIsDownloading] = useState<string | null>(null);
-
   const handleDownload = async (type: 'mobile' | 'desktop' | 'original') => {
     setIsDownloading(type);
     setDownloadType(type === 'original' ? null : type);
     
     try {
-      // Fetch the image as a blob
       const response = await fetch(image.url);
       const blob = await response.blob();
       
-      // Create download link
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -67,6 +80,11 @@ const ImageModal = ({ image, onClose, onNavigate }: ImageModalProps) => {
     } finally {
       setIsDownloading(null);
     }
+  };
+
+  const handleRecommendedClick = (recImage: typeof recommendedImages[0]) => {
+    // In a real app, this would load the new image
+    toast.info(`Opening: ${recImage.title}`);
   };
 
   return (
@@ -163,22 +181,38 @@ const ImageModal = ({ image, onClose, onNavigate }: ImageModalProps) => {
             </div>
           </motion.div>
 
-          {/* Info Panel */}
+          {/* Info Panel with Download */}
           <motion.div 
             className="w-full max-w-2xl bg-card rounded-2xl p-6 md:p-8 border border-border"
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
           >
-            {/* Title & Meta */}
-            <div className="mb-6">
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-                {image.title}
-              </h2>
-              <p className="text-muted-foreground text-sm">
-                By <span className="text-primary font-medium">@{image.author}</span>
-                {' · '}{image.downloads.toLocaleString()} downloads
-              </p>
+            {/* Title & Meta with Image Preview */}
+            <div className="flex gap-4 mb-6">
+              {/* Thumbnail Preview */}
+              <div className="flex-shrink-0">
+                <div className="w-20 h-20 rounded-xl overflow-hidden border border-border shadow-lg">
+                  <img 
+                    src={image.url} 
+                    alt={image.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+              
+              {/* Info */}
+              <div className="flex-1 min-w-0">
+                <h2 className="text-xl md:text-2xl font-bold text-foreground mb-1 truncate">
+                  {image.title}
+                </h2>
+                <p className="text-muted-foreground text-sm">
+                  By <span className="text-primary font-medium">@{image.author}</span>
+                </p>
+                <p className="text-muted-foreground text-xs mt-1">
+                  {image.downloads.toLocaleString()} downloads · {image.category}
+                </p>
+              </div>
             </div>
 
             {/* Download Buttons */}
@@ -248,6 +282,104 @@ const ImageModal = ({ image, onClose, onNavigate }: ImageModalProps) => {
                   </button>
                 ))}
               </div>
+            </div>
+          </motion.div>
+
+          {/* Recommended Images Section */}
+          <motion.div 
+            className="w-full max-w-5xl mt-10"
+            initial={{ y: 40, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl md:text-2xl font-bold text-foreground">
+                You might also like
+              </h3>
+              <button 
+                onClick={() => { onClose(); navigate('/gallery'); }}
+                className="text-sm text-primary hover:text-primary/80 transition-colors"
+              >
+                View all →
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {recommendedImages.map((recImage, index) => (
+                <motion.div
+                  key={recImage.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 + index * 0.05 }}
+                  onClick={() => handleRecommendedClick(recImage)}
+                  className="group cursor-pointer"
+                >
+                  <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-muted border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                    <img 
+                      src={recImage.url}
+                      alt={recImage.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      loading="lazy"
+                    />
+                    {/* Hover Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="absolute bottom-0 left-0 right-0 p-3">
+                        <p className="text-white font-medium text-sm truncate">
+                          {recImage.title}
+                        </p>
+                        <p className="text-white/70 text-xs">
+                          @{recImage.author}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Related by Category */}
+          <motion.div 
+            className="w-full max-w-5xl mt-10"
+            initial={{ y: 40, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.5 }}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl md:text-2xl font-bold text-foreground">
+                More in {image.category}
+              </h3>
+              <button 
+                onClick={() => { onClose(); navigate(`/gallery?category=${image.category}`); }}
+                className="text-sm text-primary hover:text-primary/80 transition-colors"
+              >
+                Explore {image.category} →
+              </button>
+            </div>
+
+            <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+              {Array.from({ length: 6 }, (_, i) => ({
+                id: image.id + 200 + i,
+                url: `https://picsum.photos/seed/${image.id + 200 + i}/300/200`,
+                title: `${image.category} ${i + 1}`,
+              })).map((relImage, index) => (
+                <motion.div
+                  key={relImage.id}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.6 + index * 0.05 }}
+                  className="cursor-pointer group"
+                >
+                  <div className="relative aspect-square rounded-lg overflow-hidden bg-muted border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-md">
+                    <img 
+                      src={relImage.url}
+                      alt={relImage.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  </div>
+                </motion.div>
+              ))}
             </div>
           </motion.div>
         </div>
