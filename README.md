@@ -155,7 +155,7 @@ Images are stored as **binary data (BYTEA) directly in PostgreSQL database**:
 - **Full Images** - Stored in `image_data` column (BYTEA, ~100KB - 500KB)
 - **Thumbnails** - Stored in `thumbnail_data` column (BYTEA, ~7KB)
 - **Metadata** - Stored alongside binary data (dimensions, MIME type, tags, etc.)
-- **Database Host** - Google Cloud PostgreSQL (34.46.166.6)
+- **Database Host** - PostgreSQL database (configure in .env.local)
 
 ### Why Binary Storage?
 
@@ -230,8 +230,8 @@ The application provides RESTful API endpoints:
 - **Radix UI** - Accessible component primitives
 
 ### Backend
-- **PostgreSQL (Google Cloud)** - Relational database with BYTEA binary storage
-  - Host: 34.46.166.6
+- **PostgreSQL** - Relational database with BYTEA binary storage
+  - Host: Configure in .env.local (never commit credentials)
   - Images stored as binary data (BYTEA columns)
   - Connection pooling for performance
 - **node-postgres (pg)** - PostgreSQL client for Node.js
@@ -335,9 +335,9 @@ Create a `.env.local` file in the **root directory**:
 
 ```env
 # Database Configuration (Required)
-DATABASE_HOST=34.46.166.6
+DATABASE_HOST=localhost
 DATABASE_PORT=5432
-DATABASE_NAME=postgres
+DATABASE_NAME=ImageStorage
 DATABASE_USER=postgres
 DATABASE_PASSWORD=your_password
 
@@ -352,8 +352,7 @@ DATABASE_POOL_MAX=10
 ```
 
 **Database Details:**
-- **Host**: 34.46.166.6 (Google Cloud PostgreSQL)
-- **Total Images**: 239 (stored as binary BYTEA)
+- **Host**: Configure in `.env.local` (use `localhost` for local development)
 - **Storage**: Images stored directly in database (`image_data`, `thumbnail_data` columns)
 
 **Important:** Never commit `.env.local` to git (it's in `.gitignore`).
@@ -462,7 +461,7 @@ npm run export:all       # Export all data
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                                                                 │
-│   Google Cloud PostgreSQL    Next.js Backend      Browser      │
+│   PostgreSQL Database      Next.js Backend      Browser      │
 │   ┌─────────────────────┐   ┌──────────────┐   ┌──────────┐  │
 │   │                     │   │              │   │          │  │
 │   │  generated_images   │──►│  API Routes  │──►│  Gallery │  │
@@ -474,7 +473,7 @@ npm run export:all       # Export all data
 │   │                     │   │              │   │          │  │
 │   └─────────────────────┘   └──────────────┘   └──────────┘  │
 │                                                                 │
-│   IP: 34.46.166.6         Your Application      User Browser   │
+│   (Configure in .env.local)  Your Application      User Browser │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -487,7 +486,7 @@ Application Starts
     ↓
 Create Connection Pool (5-10 connections)
     ↓
-Pool Connects to Google Cloud PostgreSQL (34.46.166.6:5432)
+Pool Connects to PostgreSQL database (configured in .env.local)
     ↓
 Connection Established ✅
 ```
@@ -740,7 +739,7 @@ If build fails:
 - Verify binary data exists in `image_data` and `thumbnail_data` columns
 - Check API endpoints are accessible: `/api/images/[id]/thumbnail`
 - Check browser console for CORS or network errors
-- Verify database connection to 34.46.166.6 is working
+- Verify database connection is working (check your .env.local configuration)
 - Check that API routes return proper `Content-Type` headers for binary data
 
 ### Binary Image Issues
